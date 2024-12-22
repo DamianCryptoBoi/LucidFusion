@@ -17,6 +17,7 @@ import utils.util_vis as util_vis
 from utils.options import gradio_set
 import plotly.graph_objects as go
 import trimesh
+from img_gen import Text2Image 
 
 YAML = 'options/demo.yaml'
 
@@ -200,11 +201,17 @@ def display_point_cloud(file_path):
     return fig
 
 # Gradio wrapper for the `main` function
-def gradio_main(example_name,
+def gradio_main(prompt, example_name,
     lucid_cam=False, save_video=False
 ):
+    text2image = Text2Image()
+    generated_image = text2image(prompt)
+    # generated_image_path = "generated_image.png"
+    # generated_image.save(generated_image_path)
+    
     # Set options for the run
     input_path = os.path.join(EXAMPLES_DIR, example_name)  # Set input path based on example name
+    generated_image.save(input_path)
     opt.data.demo_path = input_path
     opt.single_input = False
     opt.image_data = get_dataset_instructions(example_name)
@@ -230,11 +237,12 @@ def gradio_main(example_name,
     point_cloud_path = os.path.join(output_folder, "2_seen_surface_pred.ply")
 
     # Check if the files exist and return appropriate paths
+    generated_image_path = image_path if os.path.exists(input_path) else None
     video_result = video_path if os.path.exists(video_path) else None
     image_result = image_path if os.path.exists(image_path) else None
     point_cloud_result = point_cloud_path if os.path.exists(point_cloud_path) else None
 
-    return image_result, video_result, point_cloud_result
+    return generated_image_path, image_result, video_result, point_cloud_result
 
 # Gradio Interface
 example_options = list_example_options()
@@ -245,6 +253,8 @@ with gr.Blocks() as demo:
     # Split the interface into two columns
     with gr.Row():
         with gr.Column(scale=1):
+            # Input prompt
+            prompt = gr.Textbox(lines=3, label="Input Prompt", placeholder="Enter a prompt to generate an image")
             # Dropdown for selecting example
             example_name = gr.Dropdown(choices=example_options, label="Select Example Dataset", value=example_options[0])
             # Display example images
@@ -265,6 +275,7 @@ with gr.Blocks() as demo:
         with gr.Column(scale=1):
             # Output video
             output_image = gr.Image(label="Generated Image")
+            output_mvimage = gr.Image(label="Generated Multi-view Image")
             output_video = gr.Video(label="Generated Video")
             output_point_cloud = gr.File(label="Download Point Cloud (PLY)")
     
@@ -275,10 +286,10 @@ with gr.Blocks() as demo:
     # Define what happens when the Run button is clicked
     run_button.click(
         fn=gradio_main,
-        inputs=[example_name, lucid_cam, save_video],
-        outputs=[output_image, output_video, output_point_cloud]
+        inputs=[prompt, example_name, lucid_cam, save_video],
+        outputs=[output_image,output_mvimage, output_video, output_point_cloud]
     )
 
 # Run the demo
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=9999)
+    demo.launch(server_name="0.0.0.0", server_port=9999,share=True)
