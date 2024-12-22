@@ -206,6 +206,8 @@ def gradio_main(prompt, example_name,
 ):
     text2image = Text2Image()
     generated_image = text2image(prompt)
+    #resize to 256x256
+    generated_image = generated_image.resize((256, 256))
     # generated_image_path = "generated_image.png"
     # generated_image.save(generated_image_path)
     
