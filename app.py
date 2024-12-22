@@ -211,7 +211,8 @@ def gradio_main(prompt, example_name,
     
     # Set options for the run
     input_path = os.path.join(EXAMPLES_DIR, example_name)  # Set input path based on example name
-    generated_image.save(input_path)
+    input_img_path = os.path.join(input_path, "input.png")
+    generated_image.save(input_img_path)
     opt.data.demo_path = input_path
     opt.single_input = False
     opt.image_data = get_dataset_instructions(example_name)
@@ -237,7 +238,7 @@ def gradio_main(prompt, example_name,
     point_cloud_path = os.path.join(output_folder, "2_seen_surface_pred.ply")
 
     # Check if the files exist and return appropriate paths
-    generated_image_path = image_path if os.path.exists(input_path) else None
+    generated_image_path = image_path if os.path.exists(input_img_path) else None
     video_result = video_path if os.path.exists(video_path) else None
     image_result = image_path if os.path.exists(image_path) else None
     point_cloud_result = point_cloud_path if os.path.exists(point_cloud_path) else None
