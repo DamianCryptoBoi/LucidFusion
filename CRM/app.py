@@ -171,7 +171,7 @@ with gr.Blocks() as demo:
                                 "Auto Remove background"
                             ], value="Auto Remove background",
                             label="backgroud choice")
-                        # do_remove_background = gr.Checkbox(label=, value=True)
+                        do_remove_background = gr.Checkbox(label="Remove bg", value=True)
                         # force_remove = gr.Checkbox(label=, value=False)
                     back_groud_color = gr.ColorPicker(label="Background Color", value="#7F7F7F", interactive=False)
                     foreground_ratio = gr.Slider(
