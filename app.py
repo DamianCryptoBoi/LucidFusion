@@ -260,7 +260,7 @@ with gr.Blocks() as demo:
             # Input prompt
             prompt = gr.Textbox(lines=3, label="Input Prompt", placeholder="Enter a prompt to generate an image")
             # Dropdown for selecting example
-            example_name = gr.Dropdown(choices=example_options, label="Select Example Dataset", value=None)
+            example_name = gr.Dropdown(choices=example_options, label="Select Example Dataset", value='custom')
             # Display example images
             example_gallery = gr.Gallery(label="Example Input Images", show_label=True, columns=3, height="400px")
 
