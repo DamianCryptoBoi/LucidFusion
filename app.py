@@ -212,13 +212,14 @@ def gradio_main(prompt, example_name,
     # generated_image.save(generated_image_path)
     
     # Set options for the run
-    input_path = os.path.join(EXAMPLES_DIR, example_name)  # Set input path based on example name
+    input_path = os.path.join(EXAMPLES_DIR, 'custom')  # Set input path based on example name
     input_img_path = os.path.join(input_path, "input.png")
     generated_image.save(input_img_path)
     opt.data.demo_path = input_path
-    opt.single_input = False
-    opt.image_data = get_dataset_instructions(example_name)
-    opt.crm = False
+    opt.single_input = True
+    # opt.image_data = get_dataset_instructions(example_name)
+    opt.image_data = False
+    opt.crm = True
     opt.lucid_cam = lucid_cam
     opt.save_frames = False
     opt.save_per_view_ply = False
@@ -259,14 +260,14 @@ with gr.Blocks() as demo:
             # Input prompt
             prompt = gr.Textbox(lines=3, label="Input Prompt", placeholder="Enter a prompt to generate an image")
             # Dropdown for selecting example
-            # example_name = gr.Dropdown(choices=example_options, label="Select Example Dataset", value=example_options[0])
-            # # Display example images
-            # example_gallery = gr.Gallery(label="Example Input Images", show_label=True, columns=3, height="400px")
+            example_name = gr.Dropdown(choices=example_options, label="Select Example Dataset", value=None)
+            # Display example images
+            example_gallery = gr.Gallery(label="Example Input Images", show_label=True, columns=3, height="400px")
 
-            # # Dataset-specific instructions (with larger text)
+            # Dataset-specific instructions (with larger text)
             
-            # # Update gallery and instructions when the example dataset changes
-            # example_name.change(fn=display_example_images, inputs=[example_name], outputs=[example_gallery])
+            # Update gallery and instructions when the example dataset changes
+            example_name.change(fn=display_example_images, inputs=[example_name], outputs=[example_gallery])
             
             # Add other inputs for the model settings
             lucid_cam = gr.Checkbox(label="Use Lucid Cam", value=True)
@@ -283,13 +284,13 @@ with gr.Blocks() as demo:
             output_point_cloud = gr.File(label="Download Point Cloud (PLY)")
     
     # Load initial example images and instructions when the demo starts
-    demo.load(fn=display_example_images)
+    demo.load(fn=display_example_images, inputs=[example_name], outputs=[example_gallery])
     # demo.load(fn=get_dataset_instructions, inputs=[example_name], outputs=[dataset_instructions])
 
     # Define what happens when the Run button is clicked
     run_button.click(
         fn=gradio_main,
-        inputs=[prompt, 'custom', lucid_cam, save_video],
+        inputs=[prompt, example_name, lucid_cam, save_video],
         outputs=[output_image,output_mvimage, output_video, output_point_cloud]
     )
 
