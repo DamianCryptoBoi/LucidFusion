@@ -228,7 +228,7 @@ def gradio_main(prompt, example_name,
 
     pipeline = None
     if opt.single_input:
-        from utils.util_demo import setup_crm_diffusion, setup_imagegen_diffusion
+        from data.diffusion_data import setup_crm_diffusion, setup_imagegen_diffusion
         pipeline = setup_crm_diffusion() if opt.crm else setup_imagegen_diffusion()
 
     # Generate results using the preloaded graph and pipeline
